@@ -1,9 +1,12 @@
-from --platform=linux/arm64 rockylinux:8.9.20231119
+from --platform=linux/arm64 rockylinux:8.10.20240528
 ADD qemu-aarch64-static /usr/bin/
 
 ARG BASE_URL
 ARG DOCA_VERSION
 ARG BSP_VERSION
+ARG DISTRO
+ARG DISTRO_VERSION
+ARG DISTRO_KERNEL
 ARG MLNX_FW_UPDATER=mlnx-fw-updater-signed
 WORKDIR /root/workspace
 ADD install.sh .
@@ -14,7 +17,7 @@ ADD BF2BMC ./BF2BMC
 ADD BF3BMC ./BF3BMC
 
 ENV RUN_FW_UPDATER=no
-ENV KVER=4.18.0-513.5.1.el8_9.aarch64
+ENV KVER=4.18.0-553.el8_10.aarch64
 
 RUN dnf install -y epel-release "dnf-command(config-manager)" && \
 	dnf config-manager --set-enabled powertools && \
@@ -47,7 +50,7 @@ RUN dnf install -y kernel-$KVER \
 	kernel-modules-extra-$KVER
 
 RUN dnf install --nogpgcheck -y $MLNX_FW_UPDATER
-RUN dnf install --nogpgcheck -y doca-runtime doca-tools doca-sdk
+RUN dnf install --nogpgcheck -y doca-runtime doca-devel
 RUN dnf install --nogpgcheck -y dpacc dpacc-extract dpa-compiler
 
 RUN dnf install --nogpgcheck -y mmc-utils || dnf install --nogpgcheck -y $BASE_URL/bluefield/$BSP_VERSION/extras/mmc-utils/mmc-utils-0.1+git.20230209-1.1.aarch64.rpm || true
@@ -59,4 +62,4 @@ RUN rpm -ihv --force bootimages/mlxbf-bootimages-*.aarch64.rpm || true
 
 RUN sed -i -e "s/signed/@IMAGE_TYPE@@CUSTOM_VERSION@/;s/prod/@IMAGE_TYPE@@CUSTOM_VERSION@/" /etc/mlnx-release
 
-CMD ["/root/workspace/create_bfb", "-k", "4.18.0-513.5.1.el8_9.aarch64"]
+CMD ["/root/workspace/create_bfb", "-k", "4.18.0-553.el8_10.aarch64"]
