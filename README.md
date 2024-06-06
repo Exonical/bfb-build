@@ -20,7 +20,7 @@ Install qemu-user-static using docker container:
 To build a BlueField boot stream (BFB), run:
 
 ```
-git clone https://github.com/Mellanox/bfb-build
+git clone https://github.com/Exonical/bfb-build
 cd bfb-build
 ```
 
